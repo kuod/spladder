@@ -8,6 +8,7 @@ import multiprocessing as mp
 import signal as sig
 
 from ..helpers import log_progress
+from functools import reduce
 
 def detect_multipleskips(genes, gidx, log=False, edge_limit=300):
     # [idx_multiple_skips, exon_multiple_skips] = detect_multipleskips(genes, idx_alt) ;
@@ -41,7 +42,7 @@ def detect_multipleskips(genes, gidx, log=False, edge_limit=300):
         edge = sp.where(Pairs.toarray() == 1)
         
         if edge[0].shape[0] > edge_limit:
-            print '\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edge[0].shape[0], edge_limit)
+            print('\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edge[0].shape[0], edge_limit))
             continue
         
         for cnt in range(edge[0].shape[0]):
@@ -97,7 +98,7 @@ def detect_multipleskips(genes, gidx, log=False, edge_limit=300):
                     exon_multiple_skips.append([exon_idx_first, backtrace, exon_idx_last])
 
     if log:
-        print 'Number of multiple exon skips:\t\t\t\t\t%d' % len(idx_multiple_skips)
+        print('Number of multiple exon skips:\t\t\t\t\t%d' % len(idx_multiple_skips))
 
     return (idx_multiple_skips, exon_multiple_skips)
 
@@ -119,7 +120,7 @@ def detect_intronreten(genes, gidx, log=False, edge_limit=1000):
         edges = genes[iix].splicegraph.edges
 
         if edges.shape[0] > edge_limit:
-            print '\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit)
+            print('\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit))
             continue
         
         introns  = []
@@ -144,7 +145,7 @@ def detect_intronreten(genes, gidx, log=False, edge_limit=1000):
                     introns.append([vertices[1, exon_idx], vertices[0, exon_idx2]])
 
     if log:
-        print '\nNumber of intron retentions:\t\t\t\t\t%d' % len(idx_intron_reten)
+        print('\nNumber of intron retentions:\t\t\t\t\t%d' % len(idx_intron_reten))
 
     return (idx_intron_reten, intron_intron_reten)
 
@@ -165,7 +166,7 @@ def detect_exonskips(genes, gidx, log=False, edge_limit=1000):
         edges = genes[iix].splicegraph.edges
 
         if edges.shape[0] > edge_limit:
-            print '\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit)
+            print('\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit))
             continue
         
         for exon_idx in range(num_exons - 2): #first exon
@@ -175,7 +176,7 @@ def detect_exonskips(genes, gidx, log=False, edge_limit=1000):
                         idx_exon_skips.append(ix)
                         exon_exon_skips.append([exon_idx, exon_idx1, exon_idx2])
     if log:
-        print '\nNumber of single exon skips:\t\t\t\t\t%d' % len(idx_exon_skips)
+        print('\nNumber of single exon skips:\t\t\t\t\t%d' % len(idx_exon_skips))
 
     return (idx_exon_skips, exon_exon_skips)
 
@@ -207,7 +208,7 @@ def detect_altprime(genes, gidx, log=False, edge_limit=1000):
         strand = genes[iix].strand
 
         if edges.shape[0] > edge_limit:
-            print '\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit)
+            print('\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit))
             continue
         
         # Find alternative sites on the right of the intron,
@@ -291,8 +292,8 @@ def detect_altprime(genes, gidx, log=False, edge_limit=1000):
                     idx_alt_3prime.append(ix)
 
     if log:
-        print '\nNumber of alternative 5 prime sites:\t\t\t\t%d' % len(idx_alt_5prime)
-        print 'Number of alternative 3 prime sites:\t\t\t\t%d' % len(idx_alt_3prime)
+        print('\nNumber of alternative 5 prime sites:\t\t\t\t%d' % len(idx_alt_5prime))
+        print('Number of alternative 3 prime sites:\t\t\t\t%d' % len(idx_alt_3prime))
 
     return (idx_alt_5prime, exon_alt_5prime, idx_alt_3prime, exon_alt_3prime)
 
@@ -316,7 +317,7 @@ def detect_xorexons(genes, gidx, log=False, edge_limit=1000):
         vertices = genes[iix].splicegraph.vertices
 
         if edges.shape[0] > edge_limit:
-            print '\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit)
+            print('\nWARNING: not processing gene %i (%s); has %i edges; current limit is %i; adjust edge_limit to include.' % (ix, genes[iix].name, edges.shape[0], edge_limit))
             continue
         
         for exon_idx1 in range(num_exons - 3):
@@ -330,7 +331,7 @@ def detect_xorexons(genes, gidx, log=False, edge_limit=1000):
                                     exon_xor_exons.append([exon_idx1, exon_idx2, exon_idx3, exon_idx4])
 
     if log:
-        print '\n\nNumber of XOR exons:\t\t\t\t\t\t%i\n' % len(idx_xor_exons)
+        print('\n\nNumber of XOR exons:\t\t\t\t\t\t%i\n' % len(idx_xor_exons))
 
     return (idx_xor_exons, exon_xor_exons)
 
@@ -369,11 +370,11 @@ def detect_events(genes, event_type, idx, CFG):
                     res_cnt += 1
             if CFG['verbose']:
                 log_progress(len(idx_chunks), len(idx_chunks))
-                print ''
+                print('')
             pool.terminate()
             pool.join()
         except KeyboardInterrupt:
-            print >> sys.stderr, 'Keyboard Interrupt - exiting'
+            print('Keyboard Interrupt - exiting', file=sys.stderr)
             pool.terminate()
             pool.join()
             sys.exit(1)

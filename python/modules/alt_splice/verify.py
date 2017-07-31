@@ -1,5 +1,5 @@
 import scipy as sp
-import cPickle
+import _pickle as cPickle
 import h5py
 import sys
 import os
@@ -417,24 +417,24 @@ def verify_all_events(ev, strain_idx=None, list_bam=None, event_type=None, CFG=N
             validate_tag = '.validated'
 
         if CFG['merge_strategy'] == 'single':
-            (genes, inserted) = cPickle.load(open('%s/spladder/genes_graph_conf%i.%s%s%s.pickle' % (CFG['out_dirname'], CFG['confidence_level'], CFG['samples'][strain_idx], validate_tag, prune_tag)))
+            (genes, inserted) = cPickle.load(open('%s/spladder/genes_graph_conf%i.%s%s%s.pickle' % (CFG['out_dirname'], CFG['confidence_level'], CFG['samples'][strain_idx], validate_tag, prune_tag), 'rb'))
             fn_count = '%s/spladder/genes_graph_conf%i.%s%s%s.count.hdf5' % (CFG['out_dirname'], CFG['confidence_level'], CFG['samples'][strain_idx], validate_tag, prune_tag)
         else:
-            (genes, inserted) = cPickle.load(open('%s/spladder/genes_graph_conf%i.%s%s%s.pickle' % (CFG['out_dirname'], CFG['confidence_level'], CFG['merge_strategy'], validate_tag, prune_tag)))
+            (genes, inserted) = cPickle.load(open('%s/spladder/genes_graph_conf%i.%s%s%s.pickle' % (CFG['out_dirname'], CFG['confidence_level'], CFG['merge_strategy'], validate_tag, prune_tag),'rb'))
             fn_count = '%s/spladder/genes_graph_conf%i.%s%s%s.count.hdf5' % (CFG['out_dirname'], CFG['confidence_level'], CFG['merge_strategy'], validate_tag, prune_tag)
 
         ### load count index data from hdf5
         IN = h5py.File(fn_count, 'r')
         if os.path.exists(fn_count + '.quick_ids_segs'):
-            gene_ids_segs = cPickle.load(open(fn_count + '.quick_ids_segs', 'r'))
+            gene_ids_segs = cPickle.load(open(fn_count + '.quick_ids_segs', 'rb'))
         else:
             gene_ids_segs = IN['gene_ids_segs'][:]
         if os.path.exists(fn_count + '.quick_ids_edges'):
-            gene_ids_edges = cPickle.load(open(fn_count + '.quick_ids_edges', 'r'))
+            gene_ids_edges = cPickle.load(open(fn_count + '.quick_ids_edges', 'rb'))
         else:
             gene_ids_edges = IN['gene_ids_edges'][:]
         if os.path.exists(fn_count + '.quick_edge_idx'):
-            edge_idx = cPickle.load(open(fn_count + '.quick_edge_idx', 'r'))
+            edge_idx = cPickle.load(open(fn_count + '.quick_edge_idx', 'rb'))
         else:
             edge_idx = IN['edge_idx'][:]
 

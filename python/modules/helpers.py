@@ -13,7 +13,7 @@ def make_introns_feasible(introns, genes, CFG):
     tmp2 = sp.array([x.shape[0] for x in introns[:, 1]])
     
     unfeas = sp.where((tmp1 > 200) | (tmp2 > 200))[0]
-    print >> CFG['fd_log'], 'found %i unfeasible genes' % unfeas.shape[0]
+    print('found %i unfeasible genes' % unfeas.shape[0], file=CFG['fd_log'])
 
     while unfeas.shape[0] > 0:
         ### make filter more stringent
@@ -33,7 +33,7 @@ def make_introns_feasible(introns, genes, CFG):
         idx = sp.where(~sp.in1d(unfeas, still_unfeas))[0]
 
         for i in unfeas[idx]:
-            print >> CFG['fd_log'], '[feasibility] set criteria for gene %s to: min_ex %i, min_conf %i, max_mism %i' % (genes[i].name, CFG['read_filter']['exon_len'], CFG['read_filter']['mincount'], CFG['read_filter']['mismatch'])
+            print('[feasibility] set criteria for gene %s to: min_ex %i, min_conf %i, max_mism %i' % (genes[i].name, CFG['read_filter']['exon_len'], CFG['read_filter']['mincount'], CFG['read_filter']['mismatch']), file=CFG['fd_log'])
         unfeas = still_unfeas;
 
     return introns
